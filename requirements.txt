@@ -1,0 +1,20 @@
+## 📦 requirements.txt
+
+File **`requirements.txt`** berfungsi sebagai daftar seluruh dependensi (library) yang dibutuhkan agar aplikasi dapat berjalan dengan baik. File ini memastikan lingkungan pengembangan maupun server produksi menggunakan paket dan versi yang sesuai.
+
+Ketika proyek dijalankan di layanan cloud seperti **Railway**, **Render**, atau platform deployment lainnya, sistem akan secara otomatis membaca file ini dan menginstal seluruh dependensi menggunakan perintah:
+
+```bash
+pip install -r requirements.txt
+```
+
+Pada proyek ini, file **`requirements.txt`** mencakup beberapa library utama, antara lain:
+
+* **FastAPI** — Framework modern untuk membangun REST API yang cepat dan efisien.
+* **Uvicorn** — ASGI server untuk menjalankan aplikasi FastAPI.
+* **Motor** — Driver asynchronous untuk menghubungkan aplikasi dengan MongoDB.
+* **dnspython** — Mendukung koneksi MongoDB Atlas melalui DNS SRV (`mongodb+srv://`).
+* **Pydantic** — Validasi data, serialisasi model, dan pemeriksaan tipe data.
+* **email-validator** — Validasi format alamat email pada proses input data.
+
+Dengan adanya file ini, proses instalasi dependensi menjadi lebih mudah, konsisten, dan dapat direproduksi di berbagai lingkungan, baik untuk pengembangan lokal maupun deployment ke server produksi.
