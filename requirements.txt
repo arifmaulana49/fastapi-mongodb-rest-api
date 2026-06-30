@@ -3,3 +3,5 @@ uvicorn
 motor
 dnspython
 pydantic[email]
+email-validator
+python-dotenv
