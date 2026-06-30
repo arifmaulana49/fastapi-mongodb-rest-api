@@ -4,4 +4,7 @@ motor
 dnspython
 pydantic[email]
 email-validator
-python-dotenv
+python-
+PyJWT
+bcrypt
+python-multipart

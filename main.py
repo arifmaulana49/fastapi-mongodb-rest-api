@@ -1,11 +1,12 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse  # 📌 Tambahkan import ini
 from routers import contacts
+from routers import auth
 
 app = FastAPI(
-    title="Contact API with MongoDB Atlas",
-    description="API Kontak Cloud Berbasis NoSQL Async menggunakan Motor & MongoDB",
-    version="2.0.0"
+    title="API Kontak Cloud Berbasis NoSQL Async",
+    description="Menggunakan Motor & MongoDB Atlas dengan Sistem Keamanan JWT Token",
+    version="1.0.0"
 )
 
 # Menampilkan halaman HTML interaktif saat URL utama diakses
@@ -35,3 +36,4 @@ async def home_page():
     """
 
 app.include_router(contacts.router)
+app.include_router(auth.router)
