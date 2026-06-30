@@ -1,10 +1,10 @@
 fastapi
 uvicorn
 motor
-dnspython
+pydantic
 pydantic[email]
 email-validator
-python-
-PyJWT
+pyjwt
 bcrypt
 python-multipart
+python-dotenv
