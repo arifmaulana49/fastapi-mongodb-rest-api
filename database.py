@@ -1,13 +1,16 @@
-from motor.motor_asyncio import AsyncIOMotorClient
+import os
+from dotenv import load_dotenv
+import motor.motor_asyncio
 
-# 📌 PASTE CONNECTION STRING KAMU DI SINI
-# Ganti <db_password> dengan password asli dari user maulanaarif1904_db_user
-MONGO_DETAILS = "mongodb+srv://maulanaarif1904_db_user:Gamers99@cluster0.oqb9qkw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+# Muat variabel dari file .env
+load_dotenv()
 
-client = AsyncIOMotorClient(MONGO_DETAILS)
+# Ambil string koneksi dari environment variable
+MONGO_DETAILS = os.getenv("MONGO_DETAILS")
 
-# Membuat atau menggunakan database bernama 'buku_kontak'
+# Inisialisasi client database secara asinkron
+client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
+
+# Hubungkan ke database 'buku_kontak'
 database = client.buku_kontak
-
-# Membuat atau menggunakan collection (tabel) bernama 'contacts'
 contact_collection = database.get_collection("contacts")
