@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse  # 📌 Tambahkan import ini
+from fastapi.responses import HTMLResponse 
+from fastapi.middleware.cors import CORSMiddleware  # 📌 Impor middleware CORS
 from routers import contacts
 from routers import auth
 
@@ -7,6 +8,15 @@ app = FastAPI(
     title="API Kontak Cloud Berbasis NoSQL Async",
     description="Menggunakan Motor & MongoDB Atlas dengan Sistem Keamanan JWT Token",
     version="1.0.0"
+)
+
+# 🌐 KUNCI UTAMA: Konfigurasi CORS agar Aplikasi Frontend (Live Server) bisa mengakses API ini
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Mengizinkan akses dari domain mana pun (termasuk localhost kamu)
+    allow_credentials=True,
+    allow_methods=["*"],  # Mengizinkan semua metode HTTP (GET, POST, PUT, DELETE)
+    allow_headers=["*"],  # Mengizinkan semua Headers data (termasuk Authorization token)
 )
 
 # Menampilkan halaman HTML interaktif saat URL utama diakses
