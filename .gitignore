@@ -1,1 +1,4 @@
-echo -e ".env\n__pycache__/\n*.db" > .gitignore
+.env
+contacts.db
+__pycache__/
+venv/
