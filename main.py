@@ -1,8 +1,9 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse 
-from fastapi.middleware.cors import CORSMiddleware  # 📌 Impor middleware CORS
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from routers import contacts
 from routers import auth
+import os
 
 app = FastAPI(
     title="API Kontak Cloud Berbasis NoSQL Async",
@@ -10,40 +11,31 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# 🌐 KUNCI UTAMA: Konfigurasi CORS agar Aplikasi Frontend (Live Server) bisa mengakses API ini
+# Konfigurasi CORS (dipertahankan agar fleksibel jika ke depan butuh akses dari app mobile)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Mengizinkan akses dari domain mana pun (termasuk localhost kamu)
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Mengizinkan semua metode HTTP (GET, POST, PUT, DELETE)
-    allow_headers=["*"],  # Mengizinkan semua Headers data (termasuk Authorization token)
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# Menampilkan halaman HTML interaktif saat URL utama diakses
-@app.get("/", response_class=HTMLResponse, include_in_schema=False)
-async def home_page():
-    return """
-    <html>
-        <head>
-            <title>Contact API Production</title>
-            <style>
-                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 50px; background-color: #f4f6f9; color: #333; }
-                .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: inline-block; }
-                h1 { color: #4CAF50; }
-                a { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #008CBA; color: white; text-decoration: none; border-radius: 5px; }
-                a:hover { background-color: #007B9A; }
-            </style>
-        </head>
-        <body>
-            <div class="card">
-                <h1>🚀 Contact API Sukses Mengudara!</h1>
-                <p>Selamat datang! API sistem manajemen kontak berbasis Cloud ini telah aktif dan berjalan normal.</p>
-                <p>Untuk mencoba fitur CRUD (Create, Read, Delete), silakan masuk ke halaman dokumentasi.</p>
-                <a href="/docs">Buka Dokumentasi API (Swagger UI) ➡️</a>
-            </div>
-        </body>
-    </html>
-    """
+# Menentukan path absolut folder 'templates' secara dinamis
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
+# 📌 Menampilkan Halaman Login (index.html) saat mengakses URL utama http://127.0.0.1:8000/
+@app.get("/", response_class=FileResponse, include_in_schema=False)
+async def login_page():
+    file_path = os.path.join(TEMPLATES_DIR, "index.html")
+    return FileResponse(file_path)
+
+# 📌 Menampilkan Halaman Dashboard saat diakses lewat URL http://127.0.0.1:8000/app
+@app.get("/app", response_class=FileResponse, include_in_schema=False)
+async def dashboard_page():
+    file_path = os.path.join(TEMPLATES_DIR, "dashboard.html")
+    return FileResponse(file_path)
+
+# Mendaftarkan router API backend
 app.include_router(contacts.router)
 app.include_router(auth.router)

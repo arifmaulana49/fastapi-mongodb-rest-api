@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Cloud - Dashboard Professional</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8fafc] min-h-screen antialiased text-slate-800 relative">
+    <!-- 🔔 TOAST NOTIFICATION CONTAINER -->
+    <div
+      id="toast-container"
+      class="fixed top-24 right-6 z-50 space-y-3 pointer-events-none max-w-sm w-full px-4 sm:px-0"
+    ></div>
+
+    <!-- 🗑️ CUSTOM CONFIRMATION MODAL -->
+    <div
+      id="confirm-modal"
+      class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center z-50 p-4"
+    >
+      <div
+        class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-slate-100 transform scale-95 transition-transform duration-200"
+      >
+        <div
+          class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl mb-4"
+        >
+          ⚠️
+        </div>
+        <h3 class="text-base font-bold text-slate-900 mb-1">Hapus Kontak?</h3>
+        <p class="text-xs text-slate-500 leading-relaxed mb-6">
+          Apakah anda yakin ingin menghapus data kontak ini? Tindakan ini akan
+          menghapus data secara permanen.
+        </p>
+        <div class="flex gap-3 justify-end">
+          <button
+            id="modal-cancel-btn"
+            class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-semibold transition cursor-pointer"
+          >
+            Batal
+          </button>
+          <button
+            id="modal-confirm-btn"
+            class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition cursor-pointer"
+          >
+            Hapus
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav
+      class="bg-white/80 border-b border-slate-200/80 px-6 py-4 flex justify-between items-center sticky top-0 z-10 backdrop-blur-md"
+    >
+      <h1
+        class="text-sm sm:text-base font-bold tracking-tight flex items-center gap-2.5 text-slate-900"
+      >
+        <span
+          class="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-600 text-white text-sm shadow-sm shadow-blue-500/20 font-mono"
+          >CC</span
+        >
+        Contact Cloud
+      </h1>
+      <button
+        id="logout-btn"
+        class="bg-slate-50 hover:bg-rose-50 hover:text-rose-600 text-slate-600 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center gap-1.5 border border-slate-200/60 hover:border-rose-100"
+      >
+        🚪 Keluar
+      </button>
+    </nav>
+
+    <!-- CONTENT GRID -->
+    <div class="max-w-6xl mx-auto mt-8 px-6 pb-20">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+        <!-- PANEL FORM (TAMBAH/EDIT KONTAK) -->
+        <div
+          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 lg:sticky lg:top-28"
+        >
+          <div
+            class="flex items-center gap-2.5 mb-6 border-b border-slate-100 pb-3"
+          >
+            <span id="form-icon" class="text-blue-600 text-base">✨</span>
+            <h3 id="form-title" class="text-sm font-bold text-slate-900">
+              Tambah Kontak Baru
+            </h3>
+          </div>
+
+          <form id="contact-form" class="space-y-4" novalidate>
+            <input type="hidden" id="contact-id" />
+
+            <!-- Input Nama -->
+            <div>
+              <label
+                class="block text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1.5"
+                >Nama Lengkap</label
+              >
+              <input
+                type="text"
+                id="name"
+                class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition duration-150 text-sm"
+                required
+                placeholder="Nama Lengkap"
+              />
+              <p
+                id="error-name"
+                class="text-[11px] text-rose-600 font-medium mt-1.5 hidden"
+              >
+                ⚠️ Nama wajib diisi & minimal 3 karakter alfabet.
+              </p>
+            </div>
+
+            <!-- Input Telepon -->
+            <div>
+              <label
+                class="block text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1.5"
+                >No. Telepon / WhatsApp</label
+              >
+              <input
+                type="text"
+                id="phone"
+                class="w-full px-3.5 py-2.5 bg-slate-50/60 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition duration-150 text-sm"
+                required
+                placeholder="+62*******"
+              />
+              <p
+                id="error-phone"
+                class="text-[11px] text-rose-600 font-medium mt-1.5 hidden"
+              >
+                ⚠️ No. telepon wajib berupa angka (9 - 15 digit).
+              </p>
+            </div>
+
+            <!-- Input Email dengan Dropdown Terintegrasi -->
+            <div>
+              <label
+                class="block text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1.5"
+                >Alamat Email</label
+              >
+              <div
+                id="email-group"
+                class="flex rounded-xl bg-slate-50/60 border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/5 transition duration-150 overflow-hidden"
+              >
+                <input
+                  type="text"
+                  id="email"
+                  class="w-full px-3.5 py-2.5 bg-transparent focus:outline-none text-sm min-w-0"
+                  required
+                  placeholder="Masukan E-mail"
+                />
+                <!-- 🎯 DROPDOWN EXTENSION EMAIL -->
+                <select
+                  id="email-suffix"
+                  class="bg-slate-100/80 border-l border-slate-200 px-3 text-[11px] font-bold text-slate-600 focus:outline-none cursor-pointer hover:bg-slate-200/50 transition"
+                >
+                  <option value="@gmail.com" selected>@gmail.com</option>
+                  <option value="@yahoo.com">@yahoo.com</option>
+                  <option value="@outlook.com">@outlook.com</option>
+                </select>
+              </div>
+              <p
+                id="error-email"
+                class="text-[11px] text-rose-600 font-medium mt-1.5 hidden"
+              >
+                ⚠️ Email wajib diisi dengan format username yang valid.
+              </p>
+            </div>
+
+            <div class="flex flex-col gap-2 pt-3">
+              <button
+                type="submit"
+                id="submit-btn"
+                class="w-full bg-slate-900 hover:bg-blue-600 text-white font-semibold py-2.5 rounded-xl transition duration-150 shadow-sm shadow-slate-900/10 active:scale-[0.99] cursor-pointer text-sm"
+              >
+                Simpan Kontak
+              </button>
+              <button
+                type="button"
+                id="cancel-btn"
+                class="hidden w-full bg-slate-100 text-slate-600 font-semibold py-2.5 rounded-xl hover:bg-slate-200 transition duration-150 cursor-pointer text-sm"
+                onclick="resetFormState()"
+              >
+                Batal Edit
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- PANEL DAFTAR KONTAK -->
+        <div
+          class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80"
+        >
+          <div
+            class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-slate-100 pb-4"
+          >
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">
+                Daftar Kontak Tersimpan
+              </h3>
+              <p class="text-[11px] text-slate-400 mt-0.5">
+                Kelola koleksi database data relasi internal anda
+              </p>
+            </div>
+
+            <div class="relative w-full sm:w-64">
+              <span
+                class="absolute inset-y-0 left-3 flex items-center text-slate-400 text-xs"
+                >🔍</span
+              >
+              <input
+                type="text"
+                id="search-input"
+                class="w-full pl-9 pr-4 py-2 bg-slate-50/60 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 text-xs sm:text-sm transition duration-150"
+                placeholder="Cari nama kontak..."
+              />
+            </div>
+          </div>
+
+          <!-- LIST DATA CONTAINER -->
+          <div id="contacts-container" class="space-y-3">
+            <div
+              class="flex flex-col items-center justify-center py-16 text-slate-400 space-y-2.5"
+            >
+              <div
+                class="animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent"
+              ></div>
+              <p class="text-xs font-medium text-slate-500">
+                Sinkronisasi database...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("access_token");
+      let isEditMode = false;
+
+      let localContacts = [];
+      let isDemoMode = false;
+      let pendingDeleteId = null;
+
+      if (!token) {
+        window.location.href = "/";
+      }
+
+      // Sanitasi input real-time tetap berjalan diam agar user tidak bisa memasukkan karakter terlarang
+      document.getElementById("name").addEventListener("input", function () {
+        this.value = this.value.replace(/[^a-zA-Z\s]/g, "");
+      });
+      document.getElementById("phone").addEventListener("input", function () {
+        this.value = this.value.replace(/[^0-9]/g, "");
+      });
+
+      // 🛠️ NOTIFIKASI TOAST SUCCESS / INFO
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `transform translate-y-2 opacity-0 transition-all duration-300 pointer-events-auto flex items-center p-4 rounded-xl shadow-md text-xs font-bold border ${
+          type === "success"
+            ? "bg-emerald-50 text-emerald-800 border-emerald-200/60"
+            : "bg-blue-50 text-blue-800 border-blue-200/60"
+        }`;
+        const icon = type === "success" ? "✅" : "ℹ️";
+        toast.innerHTML = `<span class="mr-2.5 text-sm">${icon}</span> <span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(
+          () => toast.classList.remove("translate-y-2", "opacity-0"),
+          10,
+        );
+        setTimeout(() => {
+          toast.classList.add("opacity-0", "translate-y-[-8px]");
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      // JWT Decoder
+      function parseJwt(token) {
+        try {
+          return JSON.parse(atob(token.split(".")[1]));
+        } catch (e) {
+          return null;
+        }
+      }
+
+      const userPayload = parseJwt(token);
+      if (userPayload && userPayload.sub !== "arif") {
+        isDemoMode = true;
+        setTimeout(
+          () =>
+            showToast("Demo Mode aktif. Perubahan bersifat sementara.", "info"),
+          800,
+        );
+      }
+
+      // 🔄 READ DATA
+      async function fetchContacts(searchQuery = "") {
+        const container = document.getElementById("contacts-container");
+        if (isDemoMode && localContacts.length > 0) {
+          renderContacts(filterLocalContacts(searchQuery));
+          return;
+        }
+        try {
+          const response = await fetch(`/contacts/?limit=50`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const contacts = await response.json();
+          if (isDemoMode) {
+            localContacts = contacts;
+            renderContacts(filterLocalContacts(searchQuery));
+          } else {
+            renderContacts(contacts);
+          }
+        } catch (error) {
+          container.innerHTML = `<div class="bg-rose-50 text-rose-700 text-xs p-4 rounded-xl text-center font-medium">Gagal sinkronisasi data.</div>`;
+        }
+      }
+
+      function filterLocalContacts(query) {
+        if (!query) return localContacts;
+        return localContacts.filter((c) =>
+          c.name.toLowerCase().includes(query.toLowerCase()),
+        );
+      }
+
+      function renderContacts(contactsList) {
+        const container = document.getElementById("contacts-container");
+        container.innerHTML = "";
+        if (contactsList.length === 0) {
+          container.innerHTML = `<div class="text-center py-14 border border-dashed border-slate-200 rounded-2xl bg-slate-50/50"><p class="text-xl mb-1.5">📭</p><p class="text-slate-400 text-xs font-semibold">Tidak ada data kontak ditemukan.</p></div>`;
+          return;
+        }
+        contactsList.forEach((contact) => {
+          const initial = contact.name
+            ? contact.name.charAt(0).toUpperCase()
+            : "?";
+          const card = document.createElement("div");
+          card.className =
+            "flex flex-col sm:flex-row justify-between sm:items-center p-4 rounded-xl border border-slate-100 bg-white hover:border-slate-200 hover:shadow-xs transition-all duration-200 gap-4 group";
+          card.innerHTML = `
+              <div class="flex items-center gap-3.5 min-w-0">
+                  <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-700 border border-slate-200/60 flex items-center justify-center font-bold text-xs shrink-0">${initial}</div>
+                  <div class="space-y-1 min-w-0">
+                      <p class="font-bold text-slate-900 text-xs sm:text-sm tracking-tight truncate">${contact.name}</p>
+                      <div class="flex flex-col sm:flex-row sm:items-center gap-x-3 gap-y-0.5 text-[11px] text-slate-500 font-medium">
+                        <span class="flex items-center gap-1 text-slate-700">📱 ${contact.phone}</span>
+                        <span class="hidden sm:inline text-slate-300">|</span>
+                        <span class="truncate">✉️ ${contact.email}</span>
+                      </div>
+                  </div>
+              </div>
+              <div class="flex gap-2 self-end sm:self-center shrink-0 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-150">
+                  <button onclick='prepareEdit(${JSON.stringify(contact)})' class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer">Edit</button>
+                  <button onclick="triggerDeleteModal('${contact.id}')" class="bg-white border border-slate-200 text-slate-400 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-100 px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer">Hapus</button>
+              </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      // 📝 PREPARE EDIT (Memisahkan email asli dan memetakan ke dropdown)
+      window.prepareEdit = function (contact) {
+        isEditMode = true;
+        document.getElementById("form-icon").innerText = "🛠️";
+        document.getElementById("form-icon").className =
+          "text-blue-600 text-base";
+        document.getElementById("form-title").innerText =
+          "Ubah Informasi Kontak";
+        document.getElementById("submit-btn").innerText =
+          "Perbarui Data Kontak";
+        document.getElementById("submit-btn").className =
+          "w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition duration-150 shadow-sm shadow-blue-500/10 active:scale-[0.99] cursor-pointer text-sm";
+        document.getElementById("cancel-btn").classList.remove("hidden");
+
+        document.getElementById("contact-id").value = contact.id;
+        document.getElementById("name").value = contact.name;
+        document.getElementById("phone").value = contact.phone;
+
+        // Memecah email jika mengandung salah satu domain dropdown
+        let emailFull = contact.email || "";
+        const dropdown = document.getElementById("email-suffix");
+
+        if (emailFull.includes("@gmail.com")) {
+          document.getElementById("email").value = emailFull.replace(
+            "@gmail.com",
+            "",
+          );
+          dropdown.value = "@gmail.com";
+        } else if (emailFull.includes("@yahoo.com")) {
+          document.getElementById("email").value = emailFull.replace(
+            "@yahoo.com",
+            "",
+          );
+          dropdown.value = "@yahoo.com";
+        } else if (emailFull.includes("@outlook.com")) {
+          document.getElementById("email").value = emailFull.replace(
+            "@outlook.com",
+            "",
+          );
+          dropdown.value = "@outlook.com";
+        } else {
+          document.getElementById("email").value = emailFull;
+        }
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      // 🧹 RESET FORM STATE
+      window.resetFormState = function () {
+        isEditMode = false;
+        document.getElementById("contact-form").reset();
+        document.getElementById("contact-id").value = "";
+        document.getElementById("form-icon").innerText = "✨";
+        document.getElementById("form-title").innerText = "Tambah Kontak Baru";
+        document.getElementById("submit-btn").innerText = "Simpan Kontak";
+        document.getElementById("submit-btn").className =
+          "w-full bg-slate-900 hover:bg-blue-600 text-white font-semibold py-2.5 rounded-xl transition duration-150 shadow-sm shadow-slate-900/10 active:scale-[0.99] cursor-pointer text-sm";
+        document.getElementById("cancel-btn").classList.add("hidden");
+
+        // Sembunyikan semua error dan hilangkan outline merah
+        document
+          .querySelectorAll("[id^='error-']")
+          .forEach((el) => el.classList.add("hidden"));
+        document
+          .getElementById("name")
+          .classList.remove("border-rose-400", "focus:ring-rose-500/5");
+        document
+          .getElementById("phone")
+          .classList.remove("border-rose-400", "focus:ring-rose-500/5");
+        document
+          .getElementById("email-group")
+          .classList.remove("border-rose-400", "focus-within:ring-rose-500/5");
+      };
+
+      // ➕ SUBMIT HANDLER DENGAN VALIDASI KLIK
+      document
+        .getElementById("contact-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const id = document.getElementById("contact-id").value;
+          const name = document.getElementById("name").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+          const emailUsername = document.getElementById("email").value.trim();
+          const emailSuffix = document.getElementById("email-suffix").value;
+
+          // Menyusun email penuh untuk dikirim ke backend
+          const fullEmail =
+            emailUsername + (emailUsername.includes("@") ? "" : emailSuffix);
+
+          // Reset status error visual terlebih dahulu sebelum evaluasi baru
+          document
+            .querySelectorAll("[id^='error-']")
+            .forEach((el) => el.classList.add("hidden"));
+          document
+            .getElementById("name")
+            .classList.remove("border-rose-400", "focus:ring-rose-500/5");
+          document
+            .getElementById("phone")
+            .classList.remove("border-rose-400", "focus:ring-rose-500/5");
+          document
+            .getElementById("email-group")
+            .classList.remove(
+              "border-rose-400",
+              "focus-within:ring-rose-500/5",
+            );
+
+          // Jalankan Pengecekan Aturan Validasi
+          const isNameValid = name.length >= 3;
+          const isPhoneValid = phone.length >= 9 && phone.length <= 15;
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const isEmailValid =
+            emailUsername.length > 0 && emailRegex.test(fullEmail);
+
+          let hasError = false;
+
+          if (!isNameValid) {
+            document.getElementById("error-name").classList.remove("hidden");
+            document
+              .getElementById("name")
+              .classList.add("border-rose-400", "focus:ring-rose-500/5");
+            hasError = true;
+          }
+          if (!isPhoneValid) {
+            document.getElementById("error-phone").classList.remove("hidden");
+            document
+              .getElementById("phone")
+              .classList.add("border-rose-400", "focus:ring-rose-500/5");
+            hasError = true;
+          }
+          if (!isEmailValid) {
+            document.getElementById("error-email").classList.remove("hidden");
+            document
+              .getElementById("email-group")
+              .classList.add("border-rose-400", "focus-within:ring-rose-500/5");
+            hasError = true;
+          }
+
+          if (hasError) return; // Stop eksekusi jika tidak valid
+
+          // Jalankan Operasi CRUD jika lolos Validasi
+          if (isDemoMode) {
+            if (isEditMode) {
+              localContacts = localContacts.map((c) =>
+                c.id === id ? { id, name, phone, email: fullEmail } : c,
+              );
+              showToast("Kontak diperbarui (Simulasi RAM).");
+            } else {
+              const fakeId = "demo_" + Math.random().toString(36).substr(2, 9);
+              localContacts.unshift({
+                id: fakeId,
+                name,
+                phone,
+                email: fullEmail,
+              });
+              showToast("Kontak ditambah (Simulasi RAM).");
+            }
+            resetFormState();
+            renderContacts(localContacts);
+            return;
+          }
+
+          try {
+            const response = await fetch(
+              isEditMode ? `/contacts/${id}` : `/contacts/`,
+              {
+                method: isEditMode ? "PUT" : "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ name, phone, email: fullEmail }),
+              },
+            );
+            if (!response.ok) throw new Error("Gagal menyimpan ke cloud.");
+            showToast(
+              isEditMode
+                ? "Kontak diperbarui di database cloud."
+                : "Kontak baru disimpan ke database cloud.",
+            );
+            resetFormState();
+            fetchContacts();
+          } catch (error) {
+            showToast("Gagal memproses data ke server.", "error");
+          }
+        });
+
+      // 🗑️ DELETION MODAL
+      window.triggerDeleteModal = function (id) {
+        pendingDeleteId = id;
+        document.getElementById("confirm-modal").classList.remove("hidden");
+      };
+
+      document
+        .getElementById("modal-cancel-btn")
+        .addEventListener("click", () => {
+          document.getElementById("confirm-modal").classList.add("hidden");
+          pendingDeleteId = null;
+        });
+
+      document
+        .getElementById("modal-confirm-btn")
+        .addEventListener("click", async () => {
+          if (!pendingDeleteId) return;
+          document.getElementById("confirm-modal").classList.add("hidden");
+          if (isDemoMode) {
+            localContacts = localContacts.filter(
+              (c) => c.id !== pendingDeleteId,
+            );
+            renderContacts(localContacts);
+            showToast("Kontak dihapus dari memori.");
+            pendingDeleteId = null;
+            return;
+          }
+          try {
+            await fetch(`/contacts/${pendingDeleteId}`, {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            showToast("Kontak berhasil dihapus.");
+            fetchContacts();
+          } catch (error) {
+            showToast("Gagal menghapus.", "error");
+          } finally {
+            pendingDeleteId = null;
+          }
+        });
+
+      document.getElementById("search-input").addEventListener("input", (e) => {
+        if (isDemoMode) renderContacts(filterLocalContacts(e.target.value));
+        else fetchContacts(e.target.value);
+      });
+
+      document.getElementById("logout-btn").addEventListener("click", () => {
+        localStorage.removeItem("access_token");
+        window.location.href = "/";
+      });
+
+      fetchContacts();
+    </script>
+  </body>
+</html>
