@@ -1,23 +1,50 @@
-# 📖 README.md
+# 📇 Contact Cloud — Advanced REST API
 
-File **README.md** merupakan halaman utama (etalase) proyek di GitHub. Dokumentasi yang baik membantu rekruter, developer, maupun kontributor memahami tujuan, arsitektur, dan cara menjalankan proyek tanpa harus membaca seluruh source code.
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=FastAPI&logoColor=white)](https://fastapi.tiangolo.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white)](https://www.mongodb.com/)
+[![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=Railway&logoColor=white)](https://railway.app/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-## 📂 Struktur Folder
+**Contact Cloud** adalah sistem manajemen kontak modern berbasis REST API yang dirancang menggunakan pendekatan **Clean Architecture**. Sistem ini mengintegrasikan framework asynchronous performa tinggi dengan database NoSQL berbasis cloud untuk menghasilkan aplikasi yang _scalable_, aman, dan siap produksi.
 
-Menjelaskan organisasi proyek yang menggunakan **Clean Architecture** sehingga setiap komponen memiliki tanggung jawab yang jelas. Struktur dipisahkan ke dalam beberapa modul seperti **routes**, **schemas**, **database**, dan komponen pendukung lainnya agar kode lebih mudah dikembangkan, diuji, serta dipelihara.
+---
 
-## 🚀 Cara Menjalankan Proyek
+## 🛠️ Tech Stack & Ekosistem
 
-Menyediakan panduan instalasi dan konfigurasi langkah demi langkah sehingga siapa pun dapat meng-clone repository, menginstal dependensi, melakukan konfigurasi environment, dan menjalankan aplikasi di komputer baru dengan mudah.
+Aplikasi ini memanfaatkan kombinasi teknologi terbaik untuk memastikan kecepatan eksekusi dan integritas data:
 
-## 🛠️ Tech Stack
+- **Core Framework:** [FastAPI](https://fastapi.tiangolo.com/) — Framework Python modern dengan performa setara NodeJS & Go berkat arsitektur ASGI.
+- **Database Driver:** [Motor](https://motor.readthedocs.io/) — Driver MongoDB asynchronous non-blocking untuk performa konkurensi maksimal.
+- **Cloud Database:** [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) — Database NoSQL berbasis cloud dengan skema dokumen yang fleksibel.
+- **Data Validation:** [Pydantic v2](https://docs.pydantic.dev/) — Validasi tipe data ketat dan serialisasi data instan pada _Request/Response Body_.
+- **Security & Auth:** [PyJWT](https://pyjwt.readthedocs.io/) & [Passlib](https://passlib.readthedocs.io/) — Implementasi otentikasi aman menggunakan token _JSON Web Token_ (JWT) dan enkripsi password _Bcrypt_.
+- **Application Server:** [Uvicorn](https://www.uvicorn.org/) — Server ASGI berkecepatan tinggi sebagai fondasi runtime aplikasi.
 
-Proyek ini dibangun menggunakan teknologi modern untuk pengembangan REST API yang cepat, aman, dan scalable, di antaranya:
+---
 
-- **FastAPI** — Framework Python berperforma tinggi untuk membangun REST API.
-- **Motor (Async MongoDB Driver)** — Driver asynchronous untuk menghubungkan aplikasi dengan MongoDB.
-- **MongoDB Atlas** — Database NoSQL berbasis cloud untuk penyimpanan data yang fleksibel dan skalabel.
-- **Pydantic** — Validasi data dan serialisasi model.
-- **Uvicorn** — ASGI server untuk menjalankan aplikasi FastAPI.
+## 📂 Arsitektur & Struktur Folder
 
-Dengan dokumentasi yang lengkap, proyek menjadi lebih profesional, mudah dipahami, dan siap dijadikan bagian dari portofolio maupun kolaborasi pengembangan.
+Proyek ini mengadopsi prinsip **Separation of Concerns (SoC)** sehingga setiap komponen memiliki batasan tanggung jawab yang jelas. Hal ini memudahkan proses kolaborasi, pengujian (_unit testing_), serta skalabilitas jangka panjang.
+
+```text
+rest-api/
+│
+├── routers/               # Layer Presentasi / API Endpoint Controllers
+│   ├── auth.py            # Endpoint Registrasi, Login, dan Token Isu
+│   └── contacts.py        # Endpoint Operasi CRUD Kontak Ber-Auth
+│
+├── templates/             # Layer UI / Frontend Web Interface (HTML, Tailwind CSS)
+│   ├── index.html         # Halaman Otentikasi Premium (Login Interface)
+│   └── dashboard.html     # Aplikasi Utama (Manajemen Kontak UI)
+│
+├── auth_utils.py          # Utilitas Keamanan (Hashing Bcrypt & Token JWT)
+├── database.py            # Konfigurasi Koneksi Database Engine (Motor Async Client)
+├── dependencies.py        # Layer Dependency Injection (Verifikasi Token & Session Auth)
+├── main.py                # Entry Point Aplikasi & Inisialisasi Middleware
+├── schemas.py             # Layer Validasi Skema Data (Pydantic Models)
+│
+├── .gitignore             # Konfigurasi Pengecualian Berkas Repositori Git
+├── LICENSE                # Lisensi Hak Cipta Perangkat Lunak (MIT License)
+├── README.md              # Dokumentasi Utama Proyek
+└── requirements.txt       # Manajer Dependensi Proyek Python
+```
