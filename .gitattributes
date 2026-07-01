@@ -1,0 +1,2 @@
+# Mengabaikan folder templates dari perhitungan statistik bahasa GitHub
+templates/**/* linguist-documentation=true
